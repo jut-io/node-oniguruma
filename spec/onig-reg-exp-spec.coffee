@@ -140,6 +140,30 @@ describe 'OnigRegExp', ->
         expect(match[0].start).toBe 3
         expect(match[0].match).toBe "'"
 
+    describe 'when the regex contains a named capture group', ->
+      it 'returns correct indices and matches', ->
+        regex = new OnigRegExp('\\w(?<group1>\\d+)(?<group2>\\w+)')
+        result = regex.searchSync('----a123bcd----')
+        expect(result.length).toBe 3
+        expect(result[0].match).toBe 'a123bcd'
+        expect(result[0].start).toBe 4
+        expect(result[0].end).toBe 11
+        expect(result[0].index).toBe 0
+        expect(result[0].length).toBe 7
+        expect(result[1].match).toBe '123'
+        expect(result[1].start).toBe 5
+        expect(result[1].end).toBe 8
+        expect(result[1].index).toBe 1
+        expect(result[1].length).toBe 3
+        expect(result[1].name).toBe 'group1'
+        expect(result[2].match).toBe 'bcd'
+        expect(result[2].start).toBe 8
+        expect(result[2].end).toBe 11
+        expect(result[2].index).toBe 2
+        expect(result[2].length).toBe 3
+        expect(result[2].name).toBe 'group2'
+
+
   describe '::testSync(string)', ->
     it 'returns true if the string matches the pattern', ->
       expect(new OnigRegExp("a[b-d]c").testSync('aec')).toBe false
